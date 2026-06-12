@@ -1,59 +1,246 @@
+```html
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
 <title>SherShakti Studios</title>
 
+<meta name="description" content="SherShakti Studios develops mobile games and interactive experiences for Android players worldwide.">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
 <style>
+
+*{
+margin:0;
+padding:0;
+box-sizing:border-box;
+}
+
 body{
-font-family:Arial,sans-serif;
-background:#111;
+font-family:'Poppins',sans-serif;
+background:
+radial-gradient(circle at top,#2d1b00,#111 35%,#050505 100%);
 color:white;
+overflow-x:hidden;
+}
+
+.hero{
+min-height:100vh;
+display:flex;
+align-items:center;
+justify-content:center;
 text-align:center;
-padding:50px;
+padding:40px 20px;
 }
 
-h1{
-font-size:50px;
-color:#f7c400;
+.hero-content{
+max-width:900px;
 }
 
-p{
-font-size:20px;
-max-width:700px;
-margin:auto;
+.logo{
+font-size:70px;
+font-weight:700;
+color:#ffd700;
+text-shadow:
+0 0 10px #ffd700,
+0 0 20px #ffd700,
+0 0 40px #ffb700;
+margin-bottom:20px;
+}
+
+.tagline{
+font-size:22px;
+color:#d9d9d9;
+line-height:1.8;
+margin-bottom:35px;
 }
 
 .btn{
 display:inline-block;
-margin-top:20px;
-padding:12px 25px;
-background:#f7c400;
-color:black;
+padding:15px 35px;
+background:linear-gradient(45deg,#ffd700,#ffae00);
+color:#111;
+font-weight:700;
 text-decoration:none;
-border-radius:8px;
-font-weight:bold;
+border-radius:50px;
+transition:.3s;
+box-shadow:0 0 20px rgba(255,215,0,.4);
 }
+
+.btn:hover{
+transform:translateY(-4px) scale(1.05);
+box-shadow:0 0 35px rgba(255,215,0,.8);
+}
+
+.container{
+width:90%;
+max-width:1100px;
+margin:auto;
+padding:80px 0;
+}
+
+.section-title{
+text-align:center;
+font-size:42px;
+color:#ffd700;
+margin-bottom:50px;
+}
+
+.cards{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+gap:25px;
+}
+
+.card{
+background:rgba(255,255,255,.05);
+backdrop-filter:blur(12px);
+border:1px solid rgba(255,255,255,.1);
+border-radius:20px;
+padding:30px;
+transition:.3s;
+}
+
+.card:hover{
+transform:translateY(-8px);
+border-color:#ffd700;
+}
+
+.card h3{
+color:#ffd700;
+margin-bottom:15px;
+}
+
+.card p{
+color:#d5d5d5;
+line-height:1.7;
+}
+
+.contact{
+text-align:center;
+padding-bottom:80px;
+}
+
+.email{
+font-size:20px;
+color:#ffd700;
+margin:20px 0;
+}
+
+footer{
+text-align:center;
+padding:25px;
+border-top:1px solid rgba(255,255,255,.1);
+color:#888;
+}
+
+.glow{
+position:fixed;
+width:400px;
+height:400px;
+background:#ffb700;
+filter:blur(200px);
+opacity:.12;
+top:-100px;
+right:-100px;
+pointer-events:none;
+}
+
+@media(max-width:768px){
+
+.logo{
+font-size:48px;
+}
+
+.tagline{
+font-size:18px;
+}
+
+.section-title{
+font-size:32px;
+}
+
+}
+
 </style>
 </head>
 
 <body>
 
-<h1>SherShakti Studios</h1>
+<div class="glow"></div>
 
-<p>
-Welcome to SherShakti Studios.
-We create exciting mobile games and interactive experiences for players around the world.
+<section class="hero">
+<div class="hero-content">
+
+<h1 class="logo">SherShakti Studios</h1>
+
+<p class="tagline">
+Creating immersive mobile games and interactive experiences
+for players around the world.
 </p>
 
-<p>
-Contact: stxstudio.official@gmail.com
-</p>
-
-<a class="btn" href="mailto:stxstudio.official@gmail.com">
+<a href="mailto:stxstudio.official@gmail.com" class="btn">
 Contact Us
 </a>
 
+</div>
+</section>
+
+<div class="container">
+
+<h2 class="section-title">About Our Studio</h2>
+
+<div class="cards">
+
+<div class="card">
+<h3>🎮 Game Development</h3>
+<p>
+We create engaging mobile games with smooth gameplay,
+realistic environments and exciting experiences.
+</p>
+</div>
+
+<div class="card">
+<h3>🚖 Simulation Games</h3>
+<p>
+From taxi driving to city simulation,
+our games focus on fun and immersive mechanics.
+</p>
+</div>
+
+<div class="card">
+<h3>🚀 Continuous Updates</h3>
+<p>
+We regularly improve our games through player feedback,
+new features and performance enhancements.
+</p>
+</div>
+
+</div>
+
+</div>
+
+<section class="contact">
+
+<h2 class="section-title">Contact</h2>
+
+<p class="email">
+📧 stxstudio.official@gmail.com
+</p>
+
+<a href="privacy.html" class="btn">
+Privacy Policy
+</a>
+
+</section>
+
+<footer>
+© 2026 SherShakti Studios. All Rights Reserved.
+</footer>
+
 </body>
 </html>
+```
