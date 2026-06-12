@@ -1,4 +1,3 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -7,9 +6,9 @@
 
 <title>SherShakti Studios</title>
 
-<meta name="description" content="SherShakti Studios develops mobile games and interactive experiences for Android players worldwide.">
+<meta name="description" content="SherShakti Studios - Creator of Realistic Urban Taxi and immersive mobile gaming experiences.">
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
 <style>
 
@@ -17,12 +16,12 @@
 margin:0;
 padding:0;
 box-sizing:border-box;
+scroll-behavior:smooth;
 }
 
 body{
 font-family:'Poppins',sans-serif;
-background:
-radial-gradient(circle at top,#2d1b00,#111 35%,#050505 100%);
+background:#080808;
 color:white;
 overflow-x:hidden;
 }
@@ -30,10 +29,15 @@ overflow-x:hidden;
 .hero{
 min-height:100vh;
 display:flex;
-align-items:center;
 justify-content:center;
+align-items:center;
 text-align:center;
 padding:40px 20px;
+background:
+linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.85)),
+url("images/screenshot1.jpg");
+background-size:cover;
+background-position:center;
 }
 
 .hero-content{
@@ -41,195 +45,324 @@ max-width:900px;
 }
 
 .logo{
-font-size:70px;
-font-weight:700;
-color:#ffd700;
-text-shadow:
-0 0 10px #ffd700,
-0 0 20px #ffd700,
-0 0 40px #ffb700;
+width:140px;
+height:140px;
+border-radius:30px;
+box-shadow:0 0 30px rgba(255,215,0,.5);
 margin-bottom:20px;
 }
 
-.tagline{
+.hero h1{
+font-size:65px;
+color:#ffd700;
+margin-bottom:10px;
+}
+
+.hero p{
 font-size:22px;
-color:#d9d9d9;
-line-height:1.8;
-margin-bottom:35px;
+color:#ddd;
+margin-bottom:30px;
 }
 
 .btn{
 display:inline-block;
 padding:15px 35px;
-background:linear-gradient(45deg,#ffd700,#ffae00);
+margin:10px;
+background:linear-gradient(45deg,#ffd700,#ff9d00);
 color:#111;
 font-weight:700;
 text-decoration:none;
 border-radius:50px;
 transition:.3s;
-box-shadow:0 0 20px rgba(255,215,0,.4);
 }
 
 .btn:hover{
-transform:translateY(-4px) scale(1.05);
-box-shadow:0 0 35px rgba(255,215,0,.8);
+transform:translateY(-5px);
 }
 
 .container{
 width:90%;
-max-width:1100px;
+max-width:1200px;
 margin:auto;
 padding:80px 0;
 }
 
 .section-title{
 text-align:center;
-font-size:42px;
-color:#ffd700;
+font-size:45px;
 margin-bottom:50px;
+color:#ffd700;
 }
 
-.cards{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-gap:25px;
-}
-
-.card{
-background:rgba(255,255,255,.05);
-backdrop-filter:blur(12px);
-border:1px solid rgba(255,255,255,.1);
-border-radius:20px;
+.game-card{
+display:flex;
+gap:40px;
+align-items:center;
+flex-wrap:wrap;
+background:#111;
 padding:30px;
-transition:.3s;
+border-radius:25px;
 }
 
-.card:hover{
-transform:translateY(-8px);
-border-color:#ffd700;
+.game-card img{
+width:220px;
+border-radius:25px;
 }
 
-.card h3{
+.game-info{
+flex:1;
+}
+
+.game-info h3{
+font-size:40px;
 color:#ffd700;
 margin-bottom:15px;
 }
 
-.card p{
-color:#d5d5d5;
-line-height:1.7;
+.game-info p{
+line-height:1.8;
+color:#ccc;
+}
+
+.features{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+gap:25px;
+}
+
+.feature{
+background:#111;
+padding:25px;
+border-radius:20px;
+text-align:center;
+transition:.3s;
+}
+
+.feature:hover{
+transform:translateY(-8px);
+}
+
+.feature h3{
+color:#ffd700;
+margin-bottom:10px;
+}
+
+.gallery{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:20px;
+}
+
+.gallery img{
+width:100%;
+border-radius:20px;
+transition:.3s;
+cursor:pointer;
+}
+
+.gallery img:hover{
+transform:scale(1.03);
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+gap:25px;
+text-align:center;
+}
+
+.stat{
+background:#111;
+padding:30px;
+border-radius:20px;
+}
+
+.stat h3{
+font-size:42px;
+color:#ffd700;
 }
 
 .contact{
 text-align:center;
-padding-bottom:80px;
 }
 
-.email{
-font-size:20px;
-color:#ffd700;
-margin:20px 0;
+.contact p{
+font-size:22px;
+margin-bottom:20px;
 }
 
 footer{
+background:#111;
+padding:30px;
 text-align:center;
-padding:25px;
-border-top:1px solid rgba(255,255,255,.1);
 color:#888;
-}
-
-.glow{
-position:fixed;
-width:400px;
-height:400px;
-background:#ffb700;
-filter:blur(200px);
-opacity:.12;
-top:-100px;
-right:-100px;
-pointer-events:none;
+margin-top:50px;
 }
 
 @media(max-width:768px){
 
-.logo{
-font-size:48px;
+.hero h1{
+font-size:40px;
 }
 
-.tagline{
+.hero p{
 font-size:18px;
 }
 
 .section-title{
-font-size:32px;
+font-size:34px;
+}
+
+.game-info h3{
+font-size:30px;
+}
+
+.logo{
+width:100px;
+height:100px;
 }
 
 }
 
 </style>
 </head>
-
 <body>
 
-<div class="glow"></div>
-
 <section class="hero">
+
 <div class="hero-content">
 
-<h1 class="logo">SherShakti Studios</h1>
+<img src="images/icon.png" class="logo">
 
-<p class="tagline">
-Creating immersive mobile games and interactive experiences
-for players around the world.
+<h1>SherShakti Studios</h1>
+
+<p>
+Creating Realistic Taxi Driving Experiences For Mobile Players Worldwide
 </p>
+
+<a href="#game" class="btn">Our Game</a>
 
 <a href="mailto:stxstudio.official@gmail.com" class="btn">
 Contact Us
 </a>
 
 </div>
+
 </section>
 
-<div class="container">
+<section id="game" class="container">
 
-<h2 class="section-title">About Our Studio</h2>
+<h2 class="section-title">Featured Game</h2>
 
-<div class="cards">
+<div class="game-card">
 
-<div class="card">
-<h3>🎮 Game Development</h3>
+<img src="images/icon.png">
+
+<div class="game-info">
+
+<h3>Realistic Urban Taxi</h3>
+
 <p>
-We create engaging mobile games with smooth gameplay,
-realistic environments and exciting experiences.
+Drive through a realistic city, pick up passengers,
+earn money, explore day and night environments,
+and complete exciting taxi missions.
 </p>
-</div>
-
-<div class="card">
-<h3>🚖 Simulation Games</h3>
-<p>
-From taxi driving to city simulation,
-our games focus on fun and immersive mechanics.
-</p>
-</div>
-
-<div class="card">
-<h3>🚀 Continuous Updates</h3>
-<p>
-We regularly improve our games through player feedback,
-new features and performance enhancements.
-</p>
-</div>
 
 </div>
 
 </div>
 
-<section class="contact">
+</section>
 
-<h2 class="section-title">Contact</h2>
+<section class="container">
 
-<p class="email">
-📧 stxstudio.official@gmail.com
-</p>
+<h2 class="section-title">Game Features</h2>
+
+<div class="features">
+
+<div class="feature">
+<h3>🚖 Realistic Driving</h3>
+<p>Authentic taxi driving mechanics.</p>
+</div>
+
+<div class="feature">
+<h3>👥 Passenger Pickup</h3>
+<p>Pick up and drop passengers.</p>
+</div>
+
+<div class="feature">
+<h3>🌙 Day & Night Cycle</h3>
+<p>Morning, Afternoon, Evening and Night.</p>
+</div>
+
+<div class="feature">
+<h3>🌆 Open World City</h3>
+<p>Explore a living city environment.</p>
+</div>
+
+<div class="feature">
+<h3>💰 Earn Money</h3>
+<p>Complete rides and grow your income.</p>
+</div>
+
+<div class="feature">
+<h3>🚦 Realistic Traffic</h3>
+<p>Drive with AI vehicles and city traffic.</p>
+</div>
+
+</div>
+
+</section>
+
+<section class="container">
+
+<h2 class="section-title">Game Gallery</h2>
+
+<div class="gallery">
+
+<img src="images/screenshot1.jpg">
+<img src="images/screenshot2.jpg">
+<img src="images/screenshot3.jpg">
+<img src="images/screenshot4.jpg">
+
+</div>
+
+</section>
+
+<section class="container">
+
+<h2 class="section-title">Studio Statistics</h2>
+
+<div class="stats">
+
+<div class="stat">
+<h3>1+</h3>
+<p>Published Games</p>
+</div>
+
+<div class="stat">
+<h3>50+</h3>
+<p>Downloads</p>
+</div>
+
+<div class="stat">
+<h3>24/7</h3>
+<p>Support</p>
+</div>
+
+</div>
+
+</section>
+
+<section class="container contact">
+
+<h2 class="section-title">Contact Us</h2>
+
+<p>📧 stxstudio.official@gmail.com</p>
+
+<a href="mailto:stxstudio.official@gmail.com" class="btn">
+Send Email
+</a>
 
 <a href="privacy.html" class="btn">
 Privacy Policy
@@ -238,9 +371,10 @@ Privacy Policy
 </section>
 
 <footer>
+
 © 2026 SherShakti Studios. All Rights Reserved.
+
 </footer>
 
 </body>
 </html>
-```
