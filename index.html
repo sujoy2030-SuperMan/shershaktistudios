@@ -6,227 +6,10 @@
 
 <title>SherShakti Studios</title>
 
-<meta name="description" content="SherShakti Studios - Creator of Realistic Urban Taxi and immersive mobile gaming experiences.">
+<link rel="stylesheet" href="style.css">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
 
-<style>
-
-*{
-margin:0;
-padding:0;
-box-sizing:border-box;
-scroll-behavior:smooth;
-}
-
-body{
-font-family:'Poppins',sans-serif;
-background:#080808;
-color:white;
-overflow-x:hidden;
-}
-
-.hero{
-min-height:100vh;
-display:flex;
-justify-content:center;
-align-items:center;
-text-align:center;
-padding:40px 20px;
-
-background:
-linear-gradient(rgba(0,0,0,.75),rgba(0,0,0,.85)),
-url("images/screenshot1.jpeg");
-
-background-size:cover;
-background-position:center;
-background-repeat:no-repeat;
-}
-.hero-content{
-max-width:900px;
-}
-
-.logo{
-width:140px;
-height:140px;
-border-radius:30px;
-box-shadow:0 0 30px rgba(255,215,0,.5);
-margin-bottom:20px;
-}
-
-.hero h1{
-font-size:65px;
-color:#ffd700;
-margin-bottom:10px;
-}
-
-.hero p{
-font-size:22px;
-color:#ddd;
-margin-bottom:30px;
-}
-
-.btn{
-display:inline-block;
-padding:15px 35px;
-margin:10px;
-background:linear-gradient(45deg,#ffd700,#ff9d00);
-color:#111;
-font-weight:700;
-text-decoration:none;
-border-radius:50px;
-transition:.3s;
-}
-
-.btn:hover{
-transform:translateY(-5px);
-}
-
-.container{
-width:90%;
-max-width:1200px;
-margin:auto;
-padding:80px 0;
-}
-
-.section-title{
-text-align:center;
-font-size:45px;
-margin-bottom:50px;
-color:#ffd700;
-}
-
-.game-card{
-display:flex;
-gap:40px;
-align-items:center;
-flex-wrap:wrap;
-background:#111;
-padding:30px;
-border-radius:25px;
-}
-
-.game-card img{
-width:220px;
-border-radius:25px;
-}
-
-.game-info{
-flex:1;
-}
-
-.game-info h3{
-font-size:40px;
-color:#ffd700;
-margin-bottom:15px;
-}
-
-.game-info p{
-line-height:1.8;
-color:#ccc;
-}
-
-.features{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-gap:25px;
-}
-
-.feature{
-background:#111;
-padding:25px;
-border-radius:20px;
-text-align:center;
-transition:.3s;
-}
-
-.feature:hover{
-transform:translateY(-8px);
-}
-
-.feature h3{
-color:#ffd700;
-margin-bottom:10px;
-}
-
-.gallery{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
-gap:20px;
-}
-
-.gallery img{
-width:100%;
-border-radius:20px;
-transition:.3s;
-cursor:pointer;
-}
-
-.gallery img:hover{
-transform:scale(1.03);
-}
-
-.stats{
-display:grid;
-grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
-gap:25px;
-text-align:center;
-}
-
-.stat{
-background:#111;
-padding:30px;
-border-radius:20px;
-}
-
-.stat h3{
-font-size:42px;
-color:#ffd700;
-}
-
-.contact{
-text-align:center;
-}
-
-.contact p{
-font-size:22px;
-margin-bottom:20px;
-}
-
-footer{
-background:#111;
-padding:30px;
-text-align:center;
-color:#888;
-margin-top:50px;
-}
-
-@media(max-width:768px){
-
-.hero h1{
-font-size:40px;
-}
-
-.hero p{
-font-size:18px;
-}
-
-.section-title{
-font-size:34px;
-}
-
-.game-info h3{
-font-size:30px;
-}
-
-.logo{
-width:100px;
-height:100px;
-}
-
-}
-
-</style>
 </head>
 <body>
 
@@ -242,11 +25,14 @@ height:100px;
 Creating Realistic Taxi Driving Experiences For Mobile Players Worldwide
 </p>
 
-<a href="#game" class="btn">Our Game</a>
+<div class="hero-badges">
+<span>🚖 Realistic Driving</span>
+<span>🌙 Day & Night Cycle</span>
+<span>🌆 Open World City</span>
+</div>
 
-<a href="mailto:stxstudio.official@gmail.com" class="btn">
-Contact Us
-</a>
+<a href="#game" class="btn">Our Game</a>
+<a href="mailto:stxstudio.official@gmail.com" class="btn">Contact Us</a>
 
 </div>
 
@@ -278,46 +64,6 @@ and complete exciting taxi missions.
 
 <section class="container">
 
-<h2 class="section-title">Game Features</h2>
-
-<div class="features">
-
-<div class="feature">
-<h3>🚖 Realistic Driving</h3>
-<p>Authentic taxi driving mechanics.</p>
-</div>
-
-<div class="feature">
-<h3>👥 Passenger Pickup</h3>
-<p>Pick up and drop passengers.</p>
-</div>
-
-<div class="feature">
-<h3>🌙 Day & Night Cycle</h3>
-<p>Morning, Afternoon, Evening and Night.</p>
-</div>
-
-<div class="feature">
-<h3>🌆 Open World City</h3>
-<p>Explore a living city environment.</p>
-</div>
-
-<div class="feature">
-<h3>💰 Earn Money</h3>
-<p>Complete rides and grow your income.</p>
-</div>
-
-<div class="feature">
-<h3>🚦 Realistic Traffic</h3>
-<p>Drive with AI vehicles and city traffic.</p>
-</div>
-
-</div>
-
-</section>
-
-<section class="container">
-
 <h2 class="section-title">Game Gallery</h2>
 
 <div class="gallery">
@@ -326,30 +72,6 @@ and complete exciting taxi missions.
 <img src="images/screenshot2.jpeg">
 <img src="images/screenshot3.jpeg">
 <img src="images/screenshot4.jpeg">
-</div>
-
-</section>
-
-<section class="container">
-
-<h2 class="section-title">Studio Statistics</h2>
-
-<div class="stats">
-
-<div class="stat">
-<h3>1+</h3>
-<p>Published Games</p>
-</div>
-
-<div class="stat">
-<h3>50+</h3>
-<p>Downloads</p>
-</div>
-
-<div class="stat">
-<h3>24/7</h3>
-<p>Support</p>
-</div>
 
 </div>
 
@@ -373,7 +95,7 @@ Privacy Policy
 
 <footer>
 
-© 2026 SherShakti Studios. All Rights Reserved.
+<p>© 2026 SherShakti Studios. All Rights Reserved.</p>
 
 </footer>
 
