@@ -1,298 +1,704 @@
-```html
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ImagiCraft | Ultimate Client-Side Image Tools Suite</title>
+    <meta name="description" content="Free, fast, secure client-side image compressor, resizer, converter, cropper, and PDF toolset. No file uploads to servers.">
+    
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.min.js"></script>
 
-<title>SherShakti Studios</title>
+    <style>
+        :root {
+            --bg-main: #0f172a;
+            --bg-card: #1e293b;
+            --bg-input: #334155;
+            --accent: #3b82f6;
+            --accent-hover: #2563eb;
+            --accent-success: #10b981;
+            --text-main: #f8fafc;
+            --text-muted: #94a3b8;
+            --border: #475569;
+            --radius: 12px;
+        }
 
-<meta name="description"
-content="SherShakti Studios creates realistic mobile gaming experiences.">
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            font-family: 'Inter', sans-serif;
+        }
 
-<link rel="stylesheet" href="style.css">
+        body {
+            background-color: var(--bg-main);
+            color: var(--text-main);
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+        }
 
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+        header {
+            background-color: var(--bg-card);
+            padding: 1.5rem 2rem;
+            border-bottom: 1px solid var(--border);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        header h1 {
+            font-size: 1.5rem;
+            font-weight: 700;
+            background: linear-gradient(to right, #60a5fa, #3b82f6);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+
+        .layout {
+            display: flex;
+            flex: 1;
+            height: calc(100vh - 73px);
+        }
+
+        /* Sidebar Navigation */
+        nav {
+            width: 280px;
+            background-color: var(--bg-card);
+            border-right: 1px solid var(--border);
+            padding: 1.5rem 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+            overflow-y: auto;
+        }
+
+        .nav-btn {
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+            background: none;
+            border: none;
+            color: var(--text-muted);
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            cursor: pointer;
+            text-align: left;
+            font-size: 0.95rem;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+
+        .nav-btn:hover, .nav-btn.active {
+            background-color: var(--bg-input);
+            color: var(--text-main);
+        }
+
+        .nav-btn.active {
+            border-left: 4px solid var(--accent);
+            background-color: rgba(59, 130, 246, 0.1);
+        }
+
+        /* Main Workbench Workspace */
+        main {
+            flex: 1;
+            padding: 2rem;
+            overflow-y: auto;
+            background-color: #0b0f19;
+        }
+
+        .tool-panel {
+            display: none;
+            animation: fadeIn 0.3s ease-in-out forwards;
+        }
+
+        .tool-panel.active {
+            display: block;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        h2 {
+            font-size: 1.75rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .subtitle {
+            color: var(--text-muted);
+            margin-bottom: 2rem;
+            font-size: 0.95rem;
+        }
+
+        /* Drag & Drop Zone */
+        .dropzone {
+            border: 2px dashed var(--border);
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 3rem 2rem;
+            text-align: center;
+            cursor: pointer;
+            transition: border-color 0.2s ease;
+            position: relative;
+            margin-bottom: 2rem;
+        }
+
+        .dropzone:hover, .dropzone.dragover {
+            border-color: var(--accent);
+        }
+
+        .dropzone input[type="file"] {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            opacity: 0;
+            cursor: pointer;
+        }
+
+        .dropzone-icon {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: var(--text-muted);
+        }
+
+        /* Dynamic Processing Dashboard Layout */
+        .workspace-grid {
+            display: grid;
+            grid-template-columns: 1fr 380px;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .preview-card, .controls-card {
+            background-color: var(--bg-card);
+            border-radius: var(--radius);
+            padding: 1.5rem;
+            border: 1px solid var(--border);
+        }
+
+        /* Before/After Split Container */
+        .comparison-wrapper {
+            position: relative;
+            width: 100%;
+            height: 450px;
+            overflow: hidden;
+            border-radius: var(--radius);
+            background: #111;
+        }
+
+        .comp-img {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            object-fit: contain;
+            pointer-events: none;
+        }
+
+        .comp-img-before {
+            z-index: 1;
+        }
+
+        .comp-img-after {
+            z-index: 2;
+            clip-path: inset(0 0 0 50%);
+        }
+
+        .comparison-slider {
+            position: absolute;
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            height: 100%;
+            background: transparent;
+            outline: none;
+            margin: 0;
+            z-index: 3;
+            cursor: ew-resize;
+        }
+
+        .comparison-slider::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 4px;
+            height: 450px;
+            background: var(--accent);
+            box-shadow: 0 0 10px rgba(0,0,0,0.5);
+        }
+
+        /* Cropper Mechanics Overlays */
+        .crop-bounding-box {
+            position: relative;
+            max-width: 100%;
+            max-height: 500px;
+            overflow: hidden;
+            background: #111;
+            border-radius: var(--radius);
+        }
+
+        .crop-bounding-box img {
+            max-width: 100%;
+            display: block;
+        }
+
+        .crop-overlay {
+            position: absolute;
+            border: 2px dashed #fff;
+            box-shadow: 0 0 0 9999px rgba(0, 0, 0, 0.6);
+            cursor: move;
+            top: 10%; left: 10%; width: 80%; height: 80%;
+        }
+
+        /* UI Controls Custom Elements */
+        .control-group {
+            margin-bottom: 1.5rem;
+        }
+
+        .control-group label {
+            display: block;
+            font-size: 0.85rem;
+            font-weight: 600;
+            margin-bottom: 0.5rem;
+            color: var(--text-muted);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        .input-field, select {
+            width: 100%;
+            background-color: var(--bg-input);
+            border: 1px solid var(--border);
+            color: var(--text-main);
+            padding: 0.75rem 1rem;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            outline: none;
+        }
+
+        .input-field:focus, select:focus {
+            border-color: var(--accent);
+        }
+
+        .range-slider {
+            width: 100%;
+            margin-top: 0.5rem;
+        }
+
+        .btn-action {
+            width: 100%;
+            background-color: var(--accent);
+            color: var(--text-main);
+            border: none;
+            padding: 0.85rem;
+            border-radius: var(--radius);
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: background 0.2s;
+        }
+
+        .btn-action:hover {
+            background-color: var(--accent-hover);
+        }
+
+        /* Batch Module Track Elements */
+        .batch-container {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+            margin-top: 1.5rem;
+        }
+
+        .batch-item {
+            background-color: var(--bg-card);
+            border: 1px solid var(--border);
+            border-radius: var(--radius);
+            padding: 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .batch-info h4 {
+            font-size: 0.95rem;
+            margin-bottom: 0.25rem;
+            word-break: break-all;
+        }
+
+        .batch-info p {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .status-badge {
+            font-size: 0.75rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            background-color: var(--bg-input);
+        }
+
+        .status-badge.complete {
+            background-color: rgba(16, 185, 129, 0.2);
+            color: var(--accent-success);
+        }
+
+        /* Real-time Analytic Statistics Panel */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 1rem;
+            background: var(--bg-input);
+            padding: 1rem;
+            border-radius: var(--radius);
+        }
+
+        .stat-box text {
+            display: block;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .stat-box val {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        /* Responsive Breakpoints */
+        @media(max-width: 1024px) {
+            .workspace-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 768px) {
+            .layout {
+                flex-direction: column;
+                height: auto;
+            }
+            nav {
+                width: 100%;
+                flex-direction: row;
+                overflow-x: auto;
+                border-right: none;
+                border-bottom: 1px solid var(--border);
+            }
+            .nav-btn {
+                white-space: nowrap;
+            }
+            main {
+                padding: 1rem;
+            }
+        }
+    </style>
 </head>
-
 <body>
 
-<!-- Navbar -->
-
-<nav>
-
-<div class="logo-text">
-SherShakti Studios
-</div>
-
-<ul>
-<li><a href="index.html">Home</a></li>
-<li><a href="games.html">Games</a></li>
-<li><a href="about.html">About</a></li>
-<li><a href="contact.html">Contact</a></li>
-</ul>
-
-</nav>
-
-<!-- Hero -->
-
-<section class="hero">
-
-<div class="hero-content fade-up">
-
-<img src="images/icon.jpeg" class="logo" alt="Studio Logo">
-
-<h1>Realistic Urban Taxi</h1>
-
-<p>
-Experience realistic taxi driving,
-passenger pickup missions,
-dynamic weather,
-and an immersive open world city.
-</p>
-
-<a href="games.html" class="btn">
-Explore Game
-</a>
-
-<a href="contact.html" class="btn">
-Contact Us
-</a>
-
-</div>
-
-</section>
-
-<!-- Featured Game -->
-
-<section class="container">
-
-<h2 class="section-title">
-Featured Game
-</h2>
-
-<div class="game-card fade-up">
-
-<img src="images/icon.jpeg" alt="Game Icon">
-
-<div class="game-info">
-
-<h3>Realistic Urban Taxi</h3>
-
-<p>
-
-Drive through a living city,
-pick up passengers,
-earn rewards,
-explore different times of day,
-and enjoy realistic taxi gameplay.
-
-<br><br>
-
-🚖 Realistic Driving
-
-<br>
-
-🌙 Day & Night Cycle
-
-<br>
-
-🌦 Dynamic Weather
-
-<br>
-
-👥 Passenger Pickup System
-
-<br>
-
-💰 Earn Money
-
-<br>
-
-🌆 Open World City
-
-</p>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- Features -->
-
-<section class="container">
-
-<h2 class="section-title">
-Game Features
-</h2>
-
-<div class="features">
-
-<div class="feature">
-<h3>🚖 Realistic Driving</h3>
-<p>Authentic taxi driving mechanics.</p>
-</div>
-
-<div class="feature">
-<h3>🌦 Dynamic Weather</h3>
-<p>Drive through changing weather.</p>
-</div>
-
-<div class="feature">
-<h3>🌙 Day & Night Cycle</h3>
-<p>Morning, Afternoon, Evening and Night.</p>
-</div>
-
-<div class="feature">
-<h3>👥 Passenger System</h3>
-<p>Pick up and drop passengers.</p>
-</div>
-
-<div class="feature">
-<h3>💰 Earn Money</h3>
-<p>Complete rides and grow income.</p>
-</div>
-
-<div class="feature">
-<h3>🌆 Open World City</h3>
-<p>Explore the city freely.</p>
-</div>
-
-</div>
-
-</section>
-
-<!-- Gallery -->
-
-<section class="container">
-
-<h2 class="section-title">
-Game Gallery
-</h2>
-
-<div class="gallery">
-
-<img src="images/screenshot1.jpeg" alt="Screenshot 1">
-
-<img src="images/screenshot2.jpeg" alt="Screenshot 2">
-
-<img src="images/screenshot3.jpeg" alt="Screenshot 3">
-
-<img src="images/screenshot4.jpeg" alt="Screenshot 4">
-
-</div>
-
-</section>
-
-<!-- Statistics -->
-
-<section class="container">
-
-<h2 class="section-title">
-Studio Statistics
-</h2>
-
-<div class="stats">
-
-<div class="stat">
-<h3>1+</h3>
-<p>Published Games</p>
-</div>
-
-<div class="stat">
-<h3>50+</h3>
-<p>Downloads</p>
-</div>
-
-<div class="stat">
-<h3>24/7</h3>
-<p>Support</p>
-</div>
-
-</div>
-
-</section>
-
-<!-- About -->
-
-<section class="container">
-
-<h2 class="section-title">
-About SherShakti Studios
-</h2>
-
-<div class="game-card">
-
-<div class="game-info">
-
-<p>
-
-SherShakti Studios is an independent
-mobile game development studio focused on
-creating realistic simulation and driving experiences.
-
-Our mission is to build fun,
-immersive and optimized games for players worldwide.
-
-</p>
-
-</div>
-
-</div>
-
-</section>
-
-<!-- Contact -->
-
-<section class="container contact">
-
-<h2 class="section-title">
-Contact Us
-</h2>
-
-<p>
-📧 stxstudio.official@gmail.com
-</p>
-
-<a href="mailto:stxstudio.official@gmail.com"
-class="btn">
-Send Email
-</a>
-
-<a href="privacy.html"
-class="btn">
-Privacy Policy
-</a>
-
-</section>
-
-<!-- Footer -->
-
-<footer>
-
-<h3 style="color:#ffd700;">
-SherShakti Studios
-</h3>
-
-<br>
-
-<p>
-Creating Realistic Mobile Gaming Experiences
-</p>
-
-<br>
-
-<p>
-© 2026 SherShakti Studios
-All Rights Reserved.
-</p>
-
-</footer>
-
-<script src="script.js"></script>
-
-</body>
-</html>
-```
+    <header>
+        <h1>ImagiCraft Studio</h1>
+        <div class="status-badge complete">Secure Engine: 100% Client-Side</div>
+    </header>
+
+    <div class="layout">
+        <nav>
+            <button class="nav-btn active" onclick="switchTool('compress')">⚙️ Compressor</button>
+            <button class="nav-btn" onclick="switchTool('resize')">📐 Resizer</button>
+            <button class="nav-btn" onclick="switchTool('convert')">♻️ Converter</button>
+            <button class="nav-btn" onclick="switchTool('crop')">✂️ Cropper</button>
+            <button class="nav-btn" onclick="switchTool('pdf2img')">📄 PDF to Image</button>
+            <button class="nav-btn" onclick="switchTool('img2pdf')">📦 Image to PDF</button>
+        </nav>
+
+        <main>
+            
+            <section id="compress-panel" class="tool-panel active">
+                <h2>Batch Image Compressor</h2>
+                <p class="subtitle">Optimize image file footprints locally without sacrificing high-fidelity visual elements.</p>
+                
+                <div class="dropzone" id="compress-dropzone">
+                    <div class="dropzone-icon">📥</div>
+                    <p>Drag & drop images here or <strong>browse files</strong></p>
+                    <input type="file" id="compress-input" accept="image/*" multiple>
+                </div>
+
+                <div class="workspace-grid" id="compress-workspace" style="display: none;">
+                    <div class="preview-card">
+                        <h3>Interactive Comparison Slider</h3>
+                        <p class="subtitle" style="margin-bottom:1rem;">Slide to inspect real-time compressed quality metrics.</p>
+                        <div class="comparison-wrapper">
+                            <img id="comp-before" class="comp-img comp-img-before" alt="Original asset preview">
+                            <img id="comp-after" class="comp-img comp-img-after" alt="Compressed output engine representation">
+                            <input type="range" min="0" max="100" value="50" class="comparison-slider" id="comp-slider">
+                        </div>
+                    </div>
+                    <div class="controls-card">
+                        <h3>Compression Core</h3>
+                        <div class="stats-grid">
+                            <div class="stat-box"><text>Original Size</text><val id="comp-stat-orig">-</val></div>
+                            <div class="stat-box"><text>Estimated Size</text><val id="comp-stat-new">-</val></div>
+                        </div>
+                        <div class="control-group" style="margin-top: 1.5rem;">
+                            <label>Target Engine Parameter Quality</label>
+                            <input type="range" min="5" max="100" value="75" class="range-slider" id="compress-quality">
+                            <div style="display:flex; justify-content:space-between; margin-top:0.25rem; font-size:0.85rem; color:var(--text-muted)">
+                                <span>High Compression</span><span id="quality-val">75%</span><span>Lossless</span>
+                            </div>
+                        </div>
+                        <button class="btn-action" id="btn-download-compress">Export Optimized Matrix</button>
+                    </div>
+                </div>
+                <div class="batch-container" id="compress-batch-track"></div>
+            </section>
+
+            <section id="resize-panel" class="tool-panel">
+                <h2>Precision Dimensional Resizer</h2>
+                <p class="subtitle">Scale processing canvas pixel bounds down or upward dynamically layout safely.</p>
+                
+                <div class="dropzone">
+                    <div class="dropzone-icon">📐</div>
+                    <p>Drop multi-format scaling jobs here or <strong>browse files</strong></p>
+                    <input type="file" id="resize-input" accept="image/*" multiple>
+                </div>
+
+                <div class="workspace-grid" id="resize-workspace" style="display: none;">
+                    <div class="preview-card" style="text-align: center; background:#111;">
+                        <img id="resize-preview" style="max-height:400px; max-width:100%; object-fit:contain; border-radius:var(--radius);" alt="Target Scaling Instance">
+                    </div>
+                    <div class="controls-card">
+                        <h3>Bounding Calculations</h3>
+                        <div class="control-group">
+                            <label>Target Bounds Logic</label>
+                            <select id="resize-mode">
+                                <option value="pixels">Absolute Pixel Dimension Matrix</option>
+                                <option value="percent">Proportional Linear Scaling Percentage</option>
+                            </select>
+                        </div>
+                        <div id="resize-pixel-inputs">
+                            <div class="control-group">
+                                <label>Width (px)</label>
+                                <input type="number" id="resize-w" class="input-field" value="1920">
+                            </div>
+                            <div class="control-group">
+                                <label>Height (px)</label>
+                                <input type="number" id="resize-h" class="input-field" value="1080">
+                            </div>
+                        </div>
+                        <div id="resize-percent-inputs" style="display:none;">
+                            <div class="control-group">
+                                <label>Scale Factor Value</label>
+                                <input type="range" min="1" max="200" value="50" class="range-slider" id="resize-percentage">
+                                <div style="text-align:right; font-size:0.85rem;" id="resize-pct-lbl">50%</div>
+                            </div>
+                        </div>
+                        <div class="control-group">
+                            <label><input type="checkbox" id="resize-ratio" checked> Lock Original Structural Aspect Ratio</label>
+                        </div>
+                        <button class="btn-action" id="btn-execute-resize">Process Transformed Matrix</button>
+                    </div>
+                </div>
+                <div class="batch-container" id="resize-batch-track"></div>
+            </section>
+
+            <section id="convert-panel" class="tool-panel">
+                <h2>Universal Image Format Transpiler</h2>
+                <p class="subtitle">Cross-convert formats directly in memory without remote server data leaks.</p>
+                
+                <div class="dropzone">
+                    <div class="dropzone-icon">♻️</div>
+                    <p>Select multiple images to switch output wrappers or <strong>browse files</strong></p>
+                    <input type="file" id="convert-input" accept="image/*" multiple>
+                </div>
+
+                <div class="workspace-grid" id="convert-workspace" style="display: none;">
+                    <div class="preview-card" style="text-align: center; background:#111;">
+                        <img id="convert-preview" style="max-height:400px; max-width:100%; object-fit:contain; border-radius:var(--radius);" alt="Transpile Target Stream">
+                    </div>
+                    <div class="controls-card">
+                        <h3>Target Profile Layout</h3>
+                        <div class="control-group">
+                            <label>Output Encoding Variant</label>
+                            <select id="convert-format">
+                                <option value="image/jpeg">JPEG (Joint Photographic Experts Group)</option>
+                                <option value="image/png">PNG (Portable Network Graphics)</option>
+                                <option value="image/webp">WEBP (Google Next-Gen Format)</option>
+                            </select>
+                        </div>
+                        <button class="btn-action" id="btn-execute-convert">Execute Format Conversion</button>
+                    </div>
+                </div>
+                <div class="batch-container" id="convert-batch-track"></div>
+            </section>
+
+            <section id="crop-panel" class="tool-panel">
+                <h2>Dynamic Viewport Matrix Cropper</h2>
+                <p class="subtitle">Extract specific regions via localized subgrid coordinates.</p>
+                
+                <div class="dropzone" id="crop-dropzone">
+                    <div class="dropzone-icon">✂️</div>
+                    <p>Drop file target to initialize manual viewport slicing bounding box or <strong>browse files</strong></p>
+                    <input type="file" id="crop-input" accept="image/*">
+                </div>
+
+                <div class="workspace-grid" id="crop-workspace" style="display: none;">
+                    <div class="preview-card">
+                        <div class="crop-bounding-box" id="crop-box-container">
+                            <img id="crop-target" alt="Crop layout rendering node">
+                            <div class="crop-overlay" id="crop-box"></div>
+                        </div>
+                    </div>
+                    <div class="controls-card">
+                        <h3>Boundary Locking Configurations</h3>
+                        <div class="control-group">
+                            <label>Forced Bounding Aspect Ratio Rule</label>
+                            <select id="crop-aspect">
+                                <option value="free">Dynamic Fluid Selection</option>
+                                <option value="1:1">1:1 Square Standard Profile</option>
+                                <option value="16:9">16:9 Cinematic Video Display</option>
+                                <option value="4:3">4:3 Desktop Processing View</option>
+                            </select>
+                        </div>
+                        <button class="btn-action" id="btn-execute-crop">Isolate and Crop Selected Canvas</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="pdf2img-panel" class="tool-panel">
+                <h2>Vector PDF Vector Rasterizer Engine</h2>
+                <p class="subtitle">Rasterize multi-page vector storage elements directly down into individual high DPI localized image formats.</p>
+                
+                <div class="dropzone">
+                    <div class="dropzone-icon">📄</div>
+                    <p>Supply target PDF dataset structural arrays or <strong>browse files</strong></p>
+                    <input type="file" id="pdf2img-input" accept="application/pdf">
+                </div>
+
+                <div class="workspace-grid" id="pdf2img-workspace" style="display: none;">
+                    <div class="preview-card" style="text-align: center; background:#111;">
+                        <canvas id="pdf-render-canvas" style="max-width:100%; border-radius:var(--radius); box-shadow:0 4px 10px rgba(0,0,0,0.5);"></canvas>
+                        <div style="margin-top: 1rem; display:flex; justify-content:center; gap:1rem; align-items:center;">
+                            <button id="pdf-prev-btn" class="nav-btn" style="padding:0.5rem 1rem;">◀ Previous Page</button>
+                            <span id="pdf-page-num-indicator">Page 1 / 1</span>
+                            <button id="pdf-next-btn" class="nav-btn" style="padding:0.5rem 1rem;">Next Page ▶</button>
+                        </div>
+                    </div>
+                    <div class="controls-card">
+                        <h3>Rasterizer Output Profile</h3>
+                        <div class="control-group">
+                            <label>Render Target Quality Density</label>
+                            <select id="pdf-render-scale">
+                                <option value="1">Standard Core Density (1x Screen Res)</option>
+                                <option value="2" selected>High Density Production Resolution (2x Print Output)</option>
+                                <option value="3">Ultra Density Fine Asset Generation (3x Max Scaling)</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Target Asset Wrapper Format</label>
+                            <select id="pdf-export-format">
+                                <option value="image/png">PNG Compressed Stream Map</option>
+                                <option value="image/jpeg">JPEG Standard Structural Wrap</option>
+                            </select>
+                        </div>
+                        <button class="btn-action" id="btn-execute-pdf2img">Rasterize & Export Active Framework</button>
+                    </div>
+                </div>
+            </section>
+
+            <section id="img2pdf-panel" class="tool-panel">
+                <h2>Structured Multi-Image Document Compiler</h2>
+                <p class="subtitle">Bundle loose individual image sequences into structured page configurations mapped inside a single downloadable vector PDF wrapper.</p>
+                
+                <div class="dropzone">
+                    <div class="dropzone-icon">📦</div>
+                    <p>Drop file layers sequentially to map into final pages layout sequence or <strong>browse files</strong></p>
+                    <input type="file" id="img2pdf-input" accept="image/*" multiple>
+                </div>
+
+                <div class="workspace-grid" id="img2pdf-workspace" style="display: none;">
+                    <div class="preview-card">
+                        <h3>Structural Page Queue Output Sequencing Map</h3>
+                        <div class="batch-container" id="pdf-generation-queue-track"></div>
+                    </div>
+                    <div class="controls-card">
+                        <h3>Compilation Metrics</h3>
+                        <div class="control-group">
+                            <label>Geometrical Page Orientation Standard</label>
+                            <select id="pdf-page-layout-rule">
+                                <option value="p">Adaptive Portrait Alignment Layout</option>
+                                <option value="l">System Landscape Panoramic Viewports</option>
+                            </select>
+                        </div>
+                        <div class="control-group">
+                            <label>Physical Sheet Dimension Standard Allocation</label>
+                            <select id="pdf-page-size-rule">
+                                <option value="a4">A4 Standard Printing Formats (210mm x 297mm)</option>
+                                <option value="letter">US Letter Standard Configuration Sheets</option>
+                            </select>
+                        </div>
+                        <button class="btn-action" id="btn-execute-img2pdf">Compile Sequence to Final Unified PDF Document</button>
+                    </div>
+                </div>
+            </section>
+
+        </main>
+    </div>
+
+    <script>
+        // Global App Initial Setup & Module Injections
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.4.120/pdf.worker.min.js';
+
+        // Memory cache pipeline matrixes
+        let appState = {
+            compress: { files: [], activeIdx: 0, engineConfigQuality: 0.75 },
+            resize: { files: [], activeIdx: 0 },
+            convert: { files: [], activeIdx: 0 },
+            crop: { currentFile: null, trackingActive: false, originX: 0, originY: 0, currentX: 0, currentY: 0 },
+            pdf2img: { documentRef: null, currentPageNum: 1, totalPagesCount: 0 },
+            img2pdf: { fileCollection: [] }
+        };
+
+        // Screen Navigation Routing Logic Interface
+        function switchTool(toolId) {
+            document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
+            document.querySelectorAll('.tool-panel').forEach(p => p.classList.remove('active'));
+            
+            event.target.classList.add('active');
+            document.getElementById(`${toolId}-panel`).classList.add('active');
+        }
+
+        function formatBytes(bytes) {
+            if (bytes === 0) return '0 Bytes';
+            const k = 1024;
+            const sizes = ['Bytes', 'KB', 'MB'];
+            const i = Math.floor(Math.log(bytes) / Math.log(k));
+            return parseFloat((bytes / Math.pow(k, i)).toFixed(2)) + ' ' + sizes[i];
+        }
+
+        // Setup Drag and Drop styling listeners dynamically
+        document.querySelectorAll('.dropzone').forEach(zone => {
+            zone.addEventListener('dragover', (e) => { e.preventDefault(); zone.classList.add('dragover'); });
+            zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+            zone.addEventListener('drop', () => zone.classList.remove('dragover'));
+        });
+
+        /* ==========================================================================
+           1. IMAGE COMPRESSOR RUNTIME MECHANICS
+           ========================================================================== */
+        const compInput = document.getElementById('compress-input');
+        const compSlider = document.getElementById('comp-slider');
+        const compQuality = document.getElementById('compress-quality');
+        const qualityValText = document.getElementById('quality-val');
+
+        compInput.addEventListener('change', (e) => handleCompressQueue(e.target.files));
+        document.getElementById('compress-dropzone').addEventListener('drop', (e) => {
+            e.preventDefault();
+            handleCompressQueue(e.dataTransfer.files);
+        });
+
+        function handleCompressQueue(filesList) {
+            if(!filesList.length) return;
+            appState.compress.files = Array.from(filesList);
+            appState.compress.activeIdx = 0;
+            document.getElementById('compress-workspace').style.display = 'grid';
+            renderBatchTrack('compress', appState.compress.files, 'compress-batch-track');
+            processActive
