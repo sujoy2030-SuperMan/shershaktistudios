@@ -701,4 +701,438 @@
             appState.compress.activeIdx = 0;
             document.getElementById('compress-workspace').style.display = 'grid';
             renderBatchTrack('compress', appState.compress.files, 'compress-batch-track');
-            processActive
+            processActiveCompressionItem();
+        }
+
+        compSlider.addEventListener('input', (e) => {
+            document.getElementById('comp-after').style.clipPath = `inset(0 0 0 ${e.target.value}%)`;
+        });
+
+        compQuality.addEventListener('input', (e) => {
+            appState.compress.engineConfigQuality = e.target.value / 100;
+            qualityValText.innerText = `${e.target.value}%`;
+            processActiveCompressionItem();
+        });
+
+        function processActiveCompressionItem() {
+            const activeFile = appState.compress.files[appState.compress.activeIdx];
+            if(!activeFile) return;
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const img = new Image();
+                img.onload = function() {
+                    document.getElementById('comp-before').src = event.target.result;
+                    document.getElementById('comp-stat-orig').innerText = formatBytes(activeFile.size);
+
+                    const canvas = document.createElement('canvas');
+                    const ctx = canvas.getContext('2d');
+                    canvas.width = img.width;
+                    canvas.height = img.height;
+                    ctx.drawImage(img, 0, 0);
+
+                    // Compute targeted optimization level execution dynamically
+                    const mimeType = activeFile.type === 'image/png' ? 'image/png' : 'image/jpeg';
+                    const targetDataUrl = canvas.toDataURL(mimeType, appState.compress.engineConfigQuality);
+                    
+                    document.getElementById('comp-after').src = targetDataUrl;
+                    
+                    // Approximate dynamic data stream length mapping transformation sizing weights
+                    const mockStreamLength = targetDataUrl.split(',')[1].length * 0.75;
+                    document.getElementById('comp-stat-new').innerText = formatBytes(mockStreamLength);
+                    
+                    appState.compress.compiledDataBlobUrl = targetDataUrl;
+                };
+                img.src = event.target.result;
+            };
+            reader.readAsDataURL(activeFile);
+        }
+
+        document.getElementById('btn-download-compress').addEventListener('click', () => {
+            if(!appState.compress.compiledDataBlobUrl) return;
+            const lnk = document.createElement('a');
+            lnk.download = `optimized_${appState.compress.files[appState.compress.activeIdx].name}`;
+            lnk.href = appState.compress.compiledDataBlobUrl;
+            lnk.click();
+        });
+
+        /* ==========================================================================
+           2. DIMENSIONAL SCALING TRANSFORM ENGINE (RESIZER)
+           ========================================================================== */
+        const resizeInput = document.getElementById('resize-input');
+        const resizeMode = document.getElementById('resize-mode');
+        const resizeW = document.getElementById('resize-w');
+        const resizeH = document.getElementById('resize-h');
+        const resizePct = document.getElementById('resize-percentage');
+
+        let originalDimensionsSource = { w: 0, h: 0 };
+
+        resizeInput.addEventListener('change', (e) => handleResizeQueue(e.target.files));
+
+        function handleResizeQueue(filesList) {
+            if(!filesList.length) return;
+            appState.resize.files = Array.from(filesList);
+            document.getElementById('resize-workspace').style.display = 'grid';
+            renderBatchTrack('resize', appState.resize.files, 'resize-batch-track');
+            loadActiveResizeAsset();
+        }
+
+        resizeMode.addEventListener('change', (e) => {
+            if(e.target.value === 'pixels') {
+                document.getElementById('resize-pixel-inputs').style.display = 'block';
+                document.getElementById('resize-percent-inputs').style.display = 'none';
+            } else {
+                document.getElementById('resize-pixel-inputs').style.display = 'none';
+                document.getElementById('resize-percent-inputs').style.display = 'block';
+            }
+        });
+
+        resizePct.addEventListener('input', (e) => {
+            document.getElementById('resize-pct-lbl').innerText = `${e.target.value}%`;
+        });
+
+        function loadActiveResizeAsset() {
+            const activeFile = appState.resize.files[appState.resize.activeIdx];
+            if(!activeFile) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const img = new Image();
+                img.onload = function() {
+                    originalDimensionsSource.w = img.width;
+                    originalDimensionsSource.h = img.height;
+                    resizeW.value = img.width;
+                    resizeH.value = img.height;
+                    document.getElementById('resize-preview').src = e.target.result;
+                };
+                img.src = e.target.result;
+            };
+            reader.readAsDataURL(activeFile);
+        }
+
+        // Maintain structural scale constraints dynamically
+        resizeW.addEventListener('input', () => {
+            if(document.getElementById('resize-ratio').checked && originalDimensionsSource.w) {
+                resizeH.value = Math.round((resizeW.value / originalDimensionsSource.w) * originalDimensionsSource.h);
+            }
+        });
+
+        document.getElementById('btn-execute-resize').addEventListener('click', () => {
+            const activeFile = appState.resize.files[appState.resize.activeIdx];
+            if(!activeFile) return;
+
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                const ctx = canvas.getContext('2d');
+                
+                let targetW = parseInt(resizeW.value);
+                let targetH = parseInt(resizeH.value);
+
+                if(resizeMode.value === 'percent') {
+                    const scalarMultiplier = parseInt(resizePct.value) / 100;
+                    targetW = Math.round(originalDimensionsSource.w * scalarMultiplier);
+                    targetH = Math.round(originalDimensionsSource.h * scalarMultiplier);
+                }
+
+                canvas.width = targetW;
+                canvas.height = targetH;
+                ctx.drawImage(img, 0, 0, targetW, targetH);
+
+                const lnk = document.createElement('a');
+                lnk.download = `scaled_${activeFile.name}`;
+                lnk.href = canvas.toDataURL(activeFile.type);
+                lnk.click();
+            };
+            img.src = document.getElementById('resize-preview').src;
+        });
+
+        /* ==========================================================================
+           3. UNIVERSAL CONVERTER MATRIX ARCHITECTURE
+           ========================================================================== */
+        const convertInput = document.getElementById('convert-input');
+        convertInput.addEventListener('change', (e) => {
+            if(!e.target.files.length) return;
+            appState.convert.files = Array.from(e.target.files);
+            document.getElementById('convert-workspace').style.display = 'grid';
+            renderBatchTrack('convert', appState.convert.files, 'convert-batch-track');
+            
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                document.getElementById('convert-preview').src = event.target.result;
+            };
+            reader.readAsDataURL(appState.convert.files[0]);
+        });
+
+        document.getElementById('btn-execute-convert').addEventListener('click', () => {
+            const activeFile = appState.convert.files[appState.convert.activeIdx];
+            if(!activeFile) return;
+
+            const img = new Image();
+            img.onload = function() {
+                const canvas = document.createElement('canvas');
+                canvas.width = img.width;
+                canvas.height = img.height;
+                canvas.getContext('2d').drawImage(img, 0, 0);
+
+                const chosenFormat = document.getElementById('convert-format').value;
+                const extensionsMap = { 'image/jpeg': 'jpg', 'image/png': 'png', 'image/webp': 'webp' };
+                
+                const baseName = activeFile.name.substring(0, activeFile.name.lastIndexOf('.')) || activeFile.name;
+                const lnk = document.createElement('a');
+                lnk.download = `${baseName}.${extensionsMap[chosenFormat]}`;
+                lnk.href = canvas.toDataURL(chosenFormat);
+                lnk.click();
+            };
+            img.src = document.getElementById('convert-preview').src;
+        });
+
+        /* ==========================================================================
+           4. VISUAL IMAGE VIEWPORT CROP ENGINE LAYER
+           ========================================================================== */
+        const cropInput = document.getElementById('crop-input');
+        const cropBox = document.getElementById('crop-box');
+        const cropContainer = document.getElementById('crop-box-container');
+
+        cropInput.addEventListener('change', (e) => {
+            if(!e.target.files.length) return;
+            appState.crop.currentFile = e.target.files[0];
+            document.getElementById('crop-workspace').style.display = 'grid';
+
+            const reader = new FileReader();
+            reader.onload = function(event) {
+                const targetImg = document.getElementById('crop-target');
+                targetImg.onload = function() {
+                    // Normalize standard crop framing boundaries safely
+                    cropBox.style.top = '10%';
+                    cropBox.style.left = '10%';
+                    cropBox.style.width = '80%';
+                    cropBox.style.height = '80%';
+                };
+                targetImg.src = event.target.result;
+            };
+            reader.readAsDataURL(appState.crop.currentFile);
+        });
+
+        // Manual absolute positioning tracking variables mapping loops
+        let targetDraggableNode = false;
+        let positionOffsetCoordinates = { x: 0, y: 0 };
+
+        cropBox.addEventListener('mousedown', (e) => {
+            targetDraggableNode = true;
+            positionOffsetCoordinates.x = e.clientX - cropBox.offsetLeft;
+            positionOffsetCoordinates.y = e.clientY - cropBox.offsetTop;
+            e.preventDefault();
+        });
+
+        window.addEventListener('mousemove', (e) => {
+            if (!targetDraggableNode) return;
+            
+            let newX = e.clientX - positionOffsetCoordinates.x;
+            let newY = e.clientY - positionOffsetCoordinates.y;
+
+            // Restrict bounds parameters logic loop inside host container framework 
+            const maxW = cropContainer.clientWidth - cropBox.clientWidth;
+            const maxH = cropContainer.clientHeight - cropBox.clientHeight;
+
+            newX = Math.max(0, Math.min(newX, maxW));
+            newY = Math.max(0, Math.min(newY, maxH));
+
+            cropBox.style.left = `${newX}px`;
+            cropBox.style.top = `${newY}px`;
+        });
+
+        window.addEventListener('mouseup', () => { targetDraggableNode = false; });
+
+        document.getElementById('btn-execute-crop').addEventListener('click', () => {
+            const nativeImageNode = document.getElementById('crop-target');
+            const renderingCanvasElement = document.createElement('canvas');
+            
+            // Scaled computational matrix formulas
+            const horizontalScaleRatio = nativeImageNode.naturalWidth / nativeImageNode.clientWidth;
+            const verticalScaleRatio = nativeImageNode.naturalHeight / nativeImageNode.clientHeight;
+
+            const targetSourceX = cropBox.offsetLeft * horizontalScaleRatio;
+            const targetSourceY = cropBox.offsetTop * verticalScaleRatio;
+            const targetSourceWidth = cropBox.clientWidth * horizontalScaleRatio;
+            const targetSourceHeight = cropBox.clientHeight * verticalScaleRatio;
+
+            renderingCanvasElement.width = targetSourceWidth;
+            renderingCanvasElement.height = targetSourceHeight;
+
+            renderingCanvasElement.getContext('2d').drawImage(
+                nativeImageNode,
+                targetSourceX, targetSourceY, targetSourceWidth, targetSourceHeight,
+                0, 0, targetSourceWidth, targetSourceHeight
+            );
+
+            const fileDownloadAnchorNode = document.createElement('a');
+            fileDownloadAnchorNode.download = `cropped_${appState.crop.currentFile.name}`;
+            fileDownloadAnchorNode.href = renderingCanvasElement.toDataURL(appState.crop.currentFile.type);
+            fileDownloadAnchorNode.click();
+        });
+
+        /* ==========================================================================
+           5. VECTOR PDF TO IMAGE CONVERTER PROCESSOR (RASTERIZER)
+           ========================================================================== */
+        const pdf2ImgInput = document.getElementById('pdf2img-input');
+        
+        pdf2ImgInput.addEventListener('change', (e) => {
+            if(!e.target.files.length) return;
+            const targetFile = e.target.files[0];
+            
+            const fileReaderStream = new FileReader();
+            fileReaderStream.onload = function() {
+                const systemTypedArray = new Uint8Array(this.result);
+                pdfjsLib.getDocument(systemTypedArray).promise.then(function(pdfInstancePointer) {
+                    appState.pdf2img.documentRef = pdfInstancePointer;
+                    appState.pdf2img.totalPagesCount = pdfInstancePointer.numPages;
+                    appState.pdf2img.currentPageNum = 1;
+                    
+                    document.getElementById('pdf2img-workspace').style.display = 'grid';
+                    renderTargetPdfPageFrame();
+                });
+            };
+            fileReaderStream.readAsArrayBuffer(targetFile);
+        });
+
+        function renderTargetPdfPageFrame() {
+            if(!appState.pdf2img.documentRef) return;
+            
+            appState.pdf2img.documentRef.getPage(appState.pdf2img.currentPageNum).then(function(pagePointer) {
+                const targetScaleConfigurationValue = parseFloat(document.getElementById('pdf-render-scale').value);
+                const layoutViewport = pagePointer.getViewport({ scale: targetScaleConfigurationValue });
+                
+                const canvasNode = document.getElementById('pdf-render-canvas');
+                const renderContext = canvasNode.getContext('2d');
+                canvasNode.height = layoutViewport.height;
+                canvasNode.width = layoutViewport.width;
+
+                const trackingRenderContextObject = {
+                    canvasContext: renderContext,
+                    viewport: layoutViewport
+                };
+                pagePointer.render(trackingRenderContextObject);
+                document.getElementById('pdf-page-num-indicator').innerText = `Page ${appState.pdf2img.currentPageNum} / ${appState.pdf2img.totalPagesCount}`;
+            });
+        }
+
+        document.getElementById('pdf-prev-btn').addEventListener('click', () => {
+            if(appState.pdf2img.currentPageNum <= 1) return;
+            appState.pdf2img.currentPageNum--;
+            renderTargetPdfPageFrame();
+        });
+
+        document.getElementById('pdf-next-btn').addEventListener('click', () => {
+            if(appState.pdf2img.currentPageNum >= appState.pdf2img.totalPagesCount) return;
+            appState.pdf2img.currentPageNum++;
+            renderTargetPdfPageFrame();
+        });
+
+        document.getElementById('btn-execute-pdf2img').addEventListener('click', () => {
+            const canvasContextSource = document.getElementById('pdf-render-canvas');
+            const targetMimeString = document.getElementById('pdf-export-format').value;
+            const calculatedExtension = targetMimeString === 'image/png' ? 'png' : 'jpg';
+
+            const anchorLinkNode = document.createElement('a');
+            anchorLinkNode.download = `pdf_page_${appState.pdf2img.currentPageNum}.${calculatedExtension}`;
+            anchorLinkNode.href = canvasContextSource.toDataURL(targetMimeString);
+            anchorLinkNode.click();
+        });
+
+        /* ==========================================================================
+           6. COMPACT IMAGE DOCUMENT PACKAGER (IMAGE TO PDF)
+           ========================================================================== */
+        const img2PdfInput = document.getElementById('img2pdf-input');
+        img2PdfInput.addEventListener('change', (e) => {
+            if(!e.target.files.length) return;
+            appState.img2pdf.fileCollection = Array.from(e.target.files);
+            document.getElementById('img2pdf-workspace').style.display = 'grid';
+            renderBatchTrack('img2pdf', appState.img2pdf.fileCollection, 'pdf-generation-queue-track');
+        });
+
+        document.getElementById('btn-execute-img2pdf').addEventListener('click', () => {
+            if(!appState.img2pdf.fileCollection.length) return;
+
+            const { jsPDF } = window.jspdf;
+            const targetPageLayoutSetting = document.getElementById('pdf-page-layout-rule').value;
+            const chosenPageMetricsSetting = document.getElementById('pdf-page-size-rule').value;
+            
+            const constructedPdfContainer = new jsPDF(targetPageLayoutSetting, 'mm', chosenPageMetricsSetting);
+            let balancingProcessingIndex = 0;
+
+            function processPdfImageSequenceQueue() {
+                if(balancingProcessingIndex >= appState.img2pdf.fileCollection.length) {
+                    constructedPdfContainer.save('compiled_images_document.pdf');
+                    return;
+                }
+
+                const targetedFileStream = appState.img2pdf.fileCollection[balancingProcessingIndex];
+                const fileReaderInstance = new FileReader();
+                
+                fileReaderInstance.onload = function(event) {
+                    const trackingHtmlImageNode = new Image();
+                    trackingHtmlImageNode.onload = function() {
+                        if (balancingProcessingIndex > 0) {
+                            constructedPdfContainer.addPage(chosenPageMetricsSetting, targetPageLayoutSetting);
+                        }
+                        
+                        const documentPageWidth = constructedPdfContainer.internal.pageSize.getWidth();
+                        const documentPageHeight = constructedPdfContainer.internal.pageSize.getHeight();
+                        
+                        // Scale content cleanly into full page margins container boundaries
+                        constructedPdfContainer.addImage(
+                            event.target.result, 
+                            'JPEG', 
+                            0, 0, 
+                            documentPageWidth, documentPageHeight
+                        );
+                        
+                        balancingProcessingIndex++;
+                        processPdfImageSequenceQueue();
+                    };
+                    trackingHtmlImageNode.src = event.target.result;
+                };
+                fileReaderInstance.readAsDataURL(targetedFileStream);
+            }
+
+            processPdfImageSequenceQueue();
+        });
+
+        /* ==========================================================================
+           7. BATCH OPERATIONS RENDERING ENGINE
+           ========================================================================== */
+        function renderBatchTrack(toolScopeContextKey, collection, targetDivTargetContainerId) {
+            const targetedContainerBlock = document.getElementById(targetDivTargetContainerId);
+            targetedContainerBlock.innerHTML = '';
+
+            collection.forEach((fileElementPointer, loopIndex) => {
+                const outputBatchRowMarkup = document.createElement('div');
+                outputBatchRowMarkup.className = 'batch-item';
+                
+                const isActiveItem = appState[toolScopeContextKey].activeIdx === loopIndex;
+                if(isActiveItem) outputBatchRowMarkup.style.borderColor = 'var(--accent)';
+
+                outputBatchRowMarkup.innerHTML = `
+                    <div class="batch-info">
+                        <h4>${fileElementPointer.name}</h4>
+                        <p>Raw Dimensions Block Weight: ${formatBytes(fileElementPointer.size)}</p>
+                    </div>
+                    <span class="status-badge ${isActiveItem ? 'complete' : ''}" style="cursor:pointer;">
+                        ${isActiveItem ? 'Active Asset' : 'Select'}
+                    </span>
+                `;
+
+                outputBatchRowMarkup.querySelector('.status-badge').addEventListener('click', () => {
+                    appState[toolScopeContextKey].activeIdx = loopIndex;
+                    renderBatchTrack(toolScopeContextKey, collection, targetDivTargetContainerId);
+                    if(toolScopeContextKey === 'compress') processActiveCompressionItem();
+                    if(toolScopeContextKey === 'resize') loadActiveResizeAsset();
+                });
+
+                targetedContainerBlock.appendChild(outputBatchRowMarkup);
+            });
+        }
+    </script>
+</body>
+</html>
